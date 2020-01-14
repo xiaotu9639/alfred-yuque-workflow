@@ -13,11 +13,17 @@ def main(wf):
         token = args[-1]
         wf.store_data('token', token)
         wf.logger.debug('==> Stored token is: %s', token)
+    if command == 'update':
+        wf.start_update()
 
     if command == 'open':
         webbrowser.open(args[-1])
 
 
 if __name__ == '__main__':
-    wf3 = Workflow3()
+    update_settings = {
+        'github_slug': 'xiaotu9639/alfred-yuque-workflow',
+        'frequency'  : 1
+    }
+    wf3 = Workflow3(update_settings=update_settings)
     sys.exit(wf3.run(main))
