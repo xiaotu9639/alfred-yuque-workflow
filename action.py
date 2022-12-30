@@ -11,7 +11,7 @@ def main(wf):
 
     if command == 'login':
         token = args[-1]
-        wf.store_data('token', token)
+        wf.store_data('token', token.encode(), serializer='pickle')
         wf.logger.debug('==> Stored token is: %s', token)
     if command == 'update':
         wf.start_update()

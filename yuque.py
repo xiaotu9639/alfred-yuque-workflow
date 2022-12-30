@@ -2,27 +2,29 @@
 # encoding: utf-8
 import re
 import sys
-import urllib
+import json
 
-from workflow import Workflow3, web
+from urllib import request, parse
+from workflow import Workflow3
 
 YUQUE_BASE_URL = 'https://yuque.com'
 
 
 def query_doc(wf, query):
     token = wf.stored_data('token')
-    headers = {
-        'X-Auth-Token': token}
-    url = '%s/api/v2/search?type=doc&related=true&q=%s' % (YUQUE_BASE_URL, urllib.quote(query.encode('utf-8')))
+    headers = {'X-Auth-Token': token}
+    url = '%s/api/v2/search?type=doc&related=true&q=%s' % (YUQUE_BASE_URL, parse.quote(query))
     wf.logger.debug('==> url: %s', url)
-    resp = web.get(url, headers=headers)
-    if resp.status_code == 200:
-        total = resp.json()['meta']['total']
+    req = request.Request(url, headers=headers)
+    resp = request.urlopen(req)
+    if resp.getcode() == 200:
+        resp_data = json.loads(resp.read().decode())
+        total = resp_data['meta']['total']
         # 查询结果为空
         if total == 0:
             wf.add_item(u'没有符合条件的查询结果', autocomplete='')
 
-        data = resp.json()['data']
+        data = resp_data['data']
         wf.logger.debug('==> query = %s, got result: %s', query, total)
         # 构建查询结果选择列表
         for doc in data:
@@ -35,7 +37,7 @@ def query_doc(wf, query):
                         arg='open %s%s' % (YUQUE_BASE_URL, doc['url']),
                         valid=True)
     # 未授权
-    elif resp.status_code == 401:
+    elif resp.getcode == 401:
         wf.add_item('Error: Unauthorized', autocomplete='> login ')
 
     else:

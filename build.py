@@ -5,7 +5,7 @@ import os
 import re
 import zipfile
 
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 
 if __name__ == '__main__':
     # 获取新版本号
@@ -13,7 +13,7 @@ if __name__ == '__main__':
     old_version = re.sub(r'\s', '', old_version)
     tail = int(old_version[-1]) + 1
     confirm_version = old_version[:-1] + str(tail)
-    confirm = raw_input('推荐新版本号为 %s (回车确认或输入指定版本号):' % confirm_version)
+    confirm = input('推荐新版本号为 %s (回车确认或输入指定版本号):' % confirm_version)
     new_version = confirm if confirm else confirm_version
     print(u'将使用新版本号 %s 构建发布包' % new_version)
 
